@@ -1,0 +1,36 @@
+service: nod-updates-from-mpi
+frameworkVersion: '3'
+
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    debug: true
+    edgePort: 4566
+    stages:
+     - local
+     - dev
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  lambdaHashingVersion: "20201221"
+  iam:
+    role: arn:aws-us-gov:iam::008577686731:role/appeals-${self:provider.stage}-lambda-default
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+    - http:
+        path: hello
+        method: get
+  soap:
+    handler: handler.post_soap
+    events:
+    - http:
+        path: soap
+        method: post
